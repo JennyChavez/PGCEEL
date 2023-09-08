@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PGCEEL.Shared", "PGCEEL.Shared\PGCEEL.Shared.csproj", "{4A20C89B-CD8B-4DAE-A882-D6220DAFA285}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PGCEEL.Shared", "PGCEEL.Shared\PGCEEL.Shared.csproj", "{4A20C89B-CD8B-4DAE-A882-D6220DAFA285}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PGCELL.Backend", "PGCELL.Backend\PGCELL.Backend.csproj", "{EF53E0B6-067E-432B-B4D0-906E3D7F7626}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PGCELL.Backend", "PGCELL.Backend\PGCELL.Backend.csproj", "{EF53E0B6-067E-432B-B4D0-906E3D7F7626}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PGCEEL.Frontend", "PGCEEL.Frontend\PGCEEL.Frontend.csproj", "{BBB7B48A-F558-4983-B8AF-A53C491D91B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PGCEEL.Frontend", "PGCEEL.Frontend\PGCEEL.Frontend.csproj", "{BBB7B48A-F558-4983-B8AF-A53C491D91B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
