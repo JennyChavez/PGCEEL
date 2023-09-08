@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PGCEEL.Frontend.Repositories;
 using PGCELL.Backend.Data;
 
 
@@ -9,7 +8,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("name=LocalConnection"));
-builder.Services.AddScoped<IRepository, Repository>();
 
 var app = builder.Build();
 
