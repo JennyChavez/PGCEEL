@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PGCEEL.Frontend\PGCEEL.Frontend.csproj" />
     <ProjectReference Include="..\PGCEEL.Shared\PGCEEL.Shared.csproj" />
   </ItemGroup>
 
