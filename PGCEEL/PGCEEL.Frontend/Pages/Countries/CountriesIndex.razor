@@ -45,6 +45,12 @@
     private List<Country>? countries;
 
     protected override async Task OnInitializedAsync()
+
+    {
+        await Load();
+    }
+
+    private async Task Load()
     {
         var response = await repository.GetAsync<List<Country>>("api/countries");
         if (response.Error)

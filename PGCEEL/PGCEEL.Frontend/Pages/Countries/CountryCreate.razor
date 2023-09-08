@@ -6,10 +6,11 @@
 
 <h3>Crear País</h3>
 
-<CountryForm Country="country" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+<CountryForm @ref="countryForm" Country="country" OnValidSubmit="CreateAsync" ReturnAction="Return" />
 
 @code {
     private Country country = new();
+    private CountryForm? countryForm;
 
     private async Task CreateAsync()
     {
@@ -35,6 +36,7 @@
 
     private void Return()
     {
+        countryForm!.FormPostedSuccessfully = true;
         navigationManager.NavigateTo("/countries");
     }
 }
