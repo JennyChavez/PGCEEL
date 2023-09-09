@@ -11,10 +11,13 @@ namespace PGCELL.Backend.Data
 
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<TypeNovelty> TypeNovelty { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Country>().HasIndex(c => c.Name).IsUnique();
+            modelBuilder.Entity<TypeNovelty>().HasIndex(c => c.Name).IsUnique();
         }
     }
 }
