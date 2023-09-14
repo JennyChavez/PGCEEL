@@ -11,7 +11,7 @@ namespace PGCELL.Backend.Data
 
         public DbSet<Country> Countries { get; set; }
 
-        public DbSet<TypeNovelty> TypeNovelty { get; set; }
+        public DbSet<TypeNovelty> TypesNovelties { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
