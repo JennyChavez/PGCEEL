@@ -1,0 +1,104 @@
+﻿@page "/typesnovelties"
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+
+<h3>Tipos de Novedades</h3>
+
+<a class="btn btn-primary" href="/typenovelty/create">Nuevo Tipo de Novedad</a>
+
+<GenericList MyList="typesnovelties">
+    <NoRecords>
+        <p>Aun no hay tipo de novedades registrados.</p>
+    </NoRecords>
+
+    <Body>
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th>Tipo de Novedad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var typenovelty in typesnovelties!)
+                {
+                    <tr>
+                        <td>@typenovelty.Name</td>
+                        <td>
+                            <a class="btn btn-warning btn-sm" href="/typesnovelties/edit/@typenovelty.Id">Editar</a>
+                            <button class="btn btn-danger btn-sm" @onclick=@(() => Delete(typenovelty))>Borrar</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    </Body>
+
+</GenericList>
+
+
+@code {
+    private List<TypeNovelty>? typesnovelties;
+
+    protected override async Task OnInitializedAsync()
+
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        var response = await repository.GetAsync<List<TypeNovelty>>("api/typesnovelties");
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        typesnovelties = response.Response;
+
+    }
+
+    private async Task Delete(TypeNovelty typenovelty)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = $"¿Esta seguro que quieres borrar el tipo de novedad:{typenovelty.Name}?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true
+            });
+
+        var confirm = string.IsNullOrEmpty(result.Value);
+
+        if (confirm)
+        {
+            return;
+        }
+
+        var response = await repository.DeleteAsync($"api/typesnovelties/{typenovelty.Id}");
+        if (response.Error)
+        {
+            var mensajeError = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            return;
+        }
+
+        await LoadAsync();
+
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios Guardados con exito");
+    }
+
+}
