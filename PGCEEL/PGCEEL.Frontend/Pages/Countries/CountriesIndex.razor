@@ -18,6 +18,7 @@
             <thead>
                 <tr>
                     <th>País</th>
+                    <th>Estados/Departamentos</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -26,6 +27,7 @@
                 {
                     <tr>
                         <td>@country.Name</td>
+                        <td>@country.StatesNumber</td>
                         <td>
                             <a class="btn btn-warning btn-sm" href="/countries/edit/@country.Id">Editar</a>
                             <button class="btn btn-danger btn-sm" @onclick=@(() => Delete(country))>Borrar</button>
