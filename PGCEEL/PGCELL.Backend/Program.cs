@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PGCELL.Backend.Data;
 using PGCELL.Backend.Intertfaces;
 using PGCELL.Backend.Repositories;
+using PGCELL.Backend.Services;
 using PGCELL.Backend.UnitsOfWork;
 using System.Text.Json.Serialization;
 
@@ -15,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("name=LocalConnection"));
 builder.Services.AddScoped(typeof(IGenericUnitOfWork<>), typeof(GenericUnitOfWork<>));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IApiService, ApiService>();
 builder.Services.AddTransient<SeedDb>();
 
 
