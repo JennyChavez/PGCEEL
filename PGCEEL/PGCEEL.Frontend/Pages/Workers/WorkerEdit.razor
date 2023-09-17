@@ -1,0 +1,72 @@
+﻿@page "/workers/edit/{Id:int}"
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+
+<h3>Editar Tipo de Novedad</h3>
+
+@if (worker is null)
+{
+    <Loading />
+}
+else
+{
+    <WorkerForm @ref="workerForm" Worker="worker" OnValidSubmit="SaveAsync" ReturnAction="Return" />
+}
+
+
+@code {
+    private Worker? worker;
+    private WorkerForm? workerForm;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var response = await repository.GetAsync<Worker>($"api/workers/{Id}");
+        if (response.Error)
+        {
+            if (response.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Return();
+            }
+
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+
+        }
+        worker = response.Response;
+    }
+
+    private async Task SaveAsync()
+    {
+        var response = await repository.PutAsync($"api/workers", worker);
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        Return();
+
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con exito");
+    }
+
+    private void Return()
+    {
+        workerForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/workers");
+    }
+
+}

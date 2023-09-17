@@ -1,0 +1,42 @@
+﻿@page "/workers/create"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+
+<h3>Crear Trabajador</h3>
+
+<WorkerForm @ref="workerForm" Worker="worker" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private Worker worker = new();
+    private WorkerForm? workerForm;
+
+    private async Task CreateAsync()
+    {
+        var response = await repository.PostAsync("/api/workers", worker);
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        Return();
+
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro creado con exito.");
+    }
+
+    private void Return()
+    {
+        workerForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/workers");
+    }
+}

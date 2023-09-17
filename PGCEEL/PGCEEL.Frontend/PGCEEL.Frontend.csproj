@@ -18,6 +18,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_WebToolingArtifacts Remove="properties\launchSettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="properties\launchSettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" PrivateAssets="all" />
@@ -25,6 +33,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PGCEEL.Shared\PGCEEL.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
