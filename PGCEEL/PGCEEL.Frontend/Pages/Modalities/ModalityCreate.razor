@@ -1,0 +1,42 @@
+﻿@page "/modalities/create"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+
+<h3>Crear Modalidad</h3>
+
+<ModalityForm @ref="modalityForm" Modality="modality" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private Modality modality = new();
+    private ModalityForm? modalityForm;
+
+    private async Task CreateAsync()
+    {
+        var response = await repository.PostAsync("/api/modalities", modality);
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        Return();
+
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro creado con exito.");
+    }
+
+    private void Return()
+    {
+        modalityForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/modalities");
+    }
+}

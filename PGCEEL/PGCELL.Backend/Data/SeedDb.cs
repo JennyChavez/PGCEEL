@@ -35,11 +35,11 @@ namespace PGCELL.Backend.Data
                 _context.Modalities.Add(new Modality { Name = "Contrato de trabajo a término indefinido" });
                 _context.Modalities.Add(new Modality { Name = "Contrato de aprendizaje" });
                 _context.Modalities.Add(new Modality { Name = "Contrato temporal, ocasional o accidental" });
-                _context.Modalities.Add(new Modality { Name = "Modalidad futura 1" });
-                _context.Modalities.Add(new Modality { Name = "Modalidad futura 2" });
-                _context.Modalities.Add(new Modality { Name = "Modalidad futura 3" });
-                _context.Modalities.Add(new Modality { Name = "Modalidad futura 4" });
-                _context.Modalities.Add(new Modality { Name = "Modalidad futura 5" });
+                _context.Modalities.Add(new Modality { Name = "Modalidad futura 1 contrato por hora" });
+                _context.Modalities.Add(new Modality { Name = "Modalidad futura 2 contrato por semana" });
+                _context.Modalities.Add(new Modality { Name = "Modalidad futura 3 contrato por mes" });
+                _context.Modalities.Add(new Modality { Name = "Modalidad futura 4 contrato por minutos" });
+                _context.Modalities.Add(new Modality { Name = "Modalidad futura 5 contrato por terceros" });
 
                 await _context.SaveChangesAsync();
             }

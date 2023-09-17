@@ -1,0 +1,70 @@
+﻿@page "/modalities/edit/{Id:int}"
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar Modalidad</h3>
+
+@if (modality is null)
+{
+    <Loading />
+}
+else
+{
+    <ModalityForm @ref="modalityForm" Modality="modality" OnValidSubmit="SaveAsync" ReturnAction="Return" />
+}
+
+@code {
+    private Modality? modality;
+    private ModalityForm? modalityForm;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var response = await repository.GetAsync<Modality>($"api/modalities/{Id}");
+        if (response.Error)
+        {
+            if (response.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Return();
+            }
+
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+
+        }
+        modality = response.Response;
+    }
+
+    private async Task SaveAsync()
+    {
+        var response = await repository.PutAsync($"api/modalities", modality);
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        Return();
+
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con exito");
+    }
+
+    private void Return()
+    {
+        modalityForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/modalities");
+    }
+
+}

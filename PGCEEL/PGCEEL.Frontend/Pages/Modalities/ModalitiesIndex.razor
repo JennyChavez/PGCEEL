@@ -1,0 +1,99 @@
+﻿@page "/modalities"
+@inject IRepository repository
+@inject SweetAlertService sweetAlertService
+
+<h3>Modalidades</h3>
+
+<a class="btn btn-primary" href="/workers/create">Nueva Modalidad</a>
+
+<GenericList MyList="modalities">
+    <NoRecords>
+        <p>Aun no hay trabajadores registrados.</p>
+    </NoRecords>
+
+    <Body>
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th>Trabajador</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var modaly in modalities!)
+                {
+                    <tr>
+                        <td>@modaly.Name</td>
+                        <td>
+                            <a class="btn btn-warning btn-sm" href="/modalities/edit/@modaly.Id">Editar</a>
+                            <button class="btn btn-danger btn-sm" @onclick=@(() => Delete(modaly))>Borrar</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Body>
+</GenericList>
+
+@code {
+    private List<Modality>? modalities;
+
+    protected override async Task OnInitializedAsync()
+
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        var response = await repository.GetAsync<List<Modality>>("api/modalities");
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        modalities = response.Response;
+
+    }
+
+    private async Task Delete(Modality modality)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = $"¿Esta seguro que quieres borrar el trabajador:{modality.Name}?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true
+            });
+
+        var confirm = string.IsNullOrEmpty(result.Value);
+
+        if (confirm)
+        {
+            return;
+        }
+
+        var response = await repository.DeleteAsync($"api/modalities/{modality.Id}");
+        if (response.Error)
+        {
+            var mensajeError = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            return;
+        }
+
+        await LoadAsync();
+
+        var toast = sweetAlertService.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.BottomEnd,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios Guardados con exito");
+    }
+
+}
