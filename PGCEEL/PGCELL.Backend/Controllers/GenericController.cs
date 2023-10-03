@@ -24,12 +24,11 @@ namespace PGCELL.Backend.Controllers
         [HttpGet]
         public virtual async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
-           
+
             var queryable = _entity.AsQueryable();
             return Ok(await queryable
                 .Paginate(pagination)
                 .ToListAsync());
-
         }
 
         [HttpGet("totalPages")]

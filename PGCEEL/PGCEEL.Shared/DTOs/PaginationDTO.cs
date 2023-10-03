@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PGCEEL.Shared.DTOs
+﻿namespace PGCEEL.Shared.DTOs
 {
     public class PaginationDTO
     {
