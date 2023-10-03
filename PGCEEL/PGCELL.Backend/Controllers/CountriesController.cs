@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PGCEEL.Shared.DTOs;
 using PGCEEL.Shared.Entities;
 using PGCELL.Backend.Data;
+using PGCELL.Backend.Helpers;
 using PGCELL.Backend.Intertfaces;
+using System.Linq;
 
 namespace PGCELL.Backend.Controllers
 {
@@ -12,17 +15,23 @@ namespace PGCELL.Backend.Controllers
     {
         private readonly DataContext _context;
 
-        public CountriesController(IGenericUnitOfWork<Country> unitOfWork, DataContext context) : base(unitOfWork)
+        public CountriesController(IGenericUnitOfWork<Country> unitOfWork, DataContext context) : base(unitOfWork, context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public override async Task<IActionResult> GetAsync()
+        public override async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
-            return Ok(await _context.Countries
+            var queryable = _context.Countries
                 .Include(c => c.States)
+                .AsQueryable();
+
+            return Ok(await queryable
+                .OrderBy(c => c.Name)
+                .Paginate(pagination)
                 .ToListAsync());
+
         }
 
         [HttpGet("{id}")]

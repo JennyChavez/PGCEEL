@@ -1,4 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PGCEEL.Shared.DTOs;
+using PGCELL.Backend.Data;
+using PGCELL.Backend.Helpers;
 using PGCELL.Backend.Intertfaces;
 
 namespace PGCELL.Backend.Controllers
@@ -6,22 +10,37 @@ namespace PGCELL.Backend.Controllers
     public class GenericController<T> : Controller where T : class
     {
         private readonly IGenericUnitOfWork<T> _unitOfWork;
+        private readonly DataContext _context;
+        private readonly DbSet<T> _entity;
 
-        public GenericController(IGenericUnitOfWork<T> unitOfWork)
+
+        public GenericController(IGenericUnitOfWork<T> unitOfWork, DataContext context)
         {
             _unitOfWork = unitOfWork;
+            _context = context;
+            _entity = context.Set<T>();
         }
 
         [HttpGet]
-        public virtual async Task<IActionResult> GetAsync()
+        public virtual async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
-            var action = await _unitOfWork.GetAsync();
-            if (action.WasSuccess)
-            {
-                return Ok(action.Result);
-            }
-            return BadRequest();
+           
+            var queryable = _entity.AsQueryable();
+            return Ok(await queryable
+                .Paginate(pagination)
+                .ToListAsync());
+
         }
+
+        [HttpGet("totalPages")]
+        public virtual async Task<ActionResult> GetPagesAsync([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _entity.AsQueryable();
+            double count = await queryable.CountAsync();
+            double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
+            return Ok(totalPages);
+        }
+
 
         [HttpGet("{id}")]
         public virtual async Task<IActionResult> GetAsync(int id)

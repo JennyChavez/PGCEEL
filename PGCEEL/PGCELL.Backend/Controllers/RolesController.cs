@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PGCEEL.Shared.Entities;
+using PGCELL.Backend.Data;
 using PGCELL.Backend.Intertfaces;
 
 namespace PGCELL.Backend.Controllers
@@ -8,7 +9,7 @@ namespace PGCELL.Backend.Controllers
     [ApiController]
     public class RolesController : GenericController<Role>
     {
-        public RolesController(IGenericUnitOfWork<Role> unitOfWork) : base(unitOfWork)
+        public RolesController(IGenericUnitOfWork<Role> unitOfWork, DataContext context) : base(unitOfWork, context)
         {
         }
     }

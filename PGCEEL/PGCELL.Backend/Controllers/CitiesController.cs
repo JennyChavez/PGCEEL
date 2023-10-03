@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PGCEEL.Shared.Entities;
+using PGCELL.Backend.Data;
 using PGCELL.Backend.Intertfaces;
 
 namespace PGCELL.Backend.Controllers
@@ -9,7 +10,7 @@ namespace PGCELL.Backend.Controllers
     [ApiController]
     public class CitiesController : GenericController<City>
     {
-        public CitiesController(IGenericUnitOfWork<City> unitOfWork) : base(unitOfWork)
+        public CitiesController(IGenericUnitOfWork<City> unitOfWork, DataContext context) : base(unitOfWork, context)
         {
         }
     }
