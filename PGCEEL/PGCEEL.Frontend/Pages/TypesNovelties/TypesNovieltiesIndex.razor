@@ -2,10 +2,20 @@
 @inject IRepository repository
 @inject SweetAlertService sweetAlertService
 
-
 <h3>Tipos de Novedades</h3>
 
-<a class="btn btn-primary mb-2" href="/typesnovelties/create">Nuevo Tipo de Novedad</a>
+<div class="mb-2" style="display: flex; flex-wrap:wrap; align-items: center;">
+    <div>
+        <a class="btn btn-primary" href="/typesnovelties/create">Nueva Tipo de Novedad</a>
+    </div>
+    <div class="mx-2">
+        <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Tipo de Novedad..." @bind-value="Filter" />
+    </div>
+    <div>
+        <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync">Filtrar</button>
+        <button type="button" class="btn btn-outline-danger" @onclick="CleanFilterAsync">Limpiar</button>
+    </div>
+</div>
 
 <GenericList MyList="typesnovelties">
     <NoRecords>
@@ -16,6 +26,7 @@
         <Pagination CurrentPage="currentPage"
                     TotalPages="totalPages"
                     SelectedPage="SelectedPageAsync" />
+        
         <table class="table table-striped">
 
             <thead>
@@ -36,11 +47,8 @@
                     </tr>
                 }
             </tbody>
-
         </table>
-
     </Body>
-
 </GenericList>
 
 
@@ -49,8 +57,15 @@
     private int currentPage = 1;
     private int totalPages;
 
-    protected override async Task OnInitializedAsync()
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Page { get; set; } = string.Empty;
 
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Filter { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
     }
@@ -63,6 +78,12 @@
 
     private async Task LoadAsync(int page = 1)
     {
+
+        if (!string.IsNullOrWhiteSpace(Page))
+        {
+            page = Convert.ToInt32(Page);
+        }
+
         var ok = await LoadListAsync(page);
         if (ok)
         {
@@ -70,23 +91,19 @@
         }
     }
 
-
-    private async Task<bool> LoadListAsync(int page)
-    {
-        var response = await repository.GetAsync<List<TypeNovelty>>($"api/typesnovelties?page={page}");
-        if (response.Error)
-        {
-            var message = await response.GetErrorMessageAsync();
-            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
-            return false;
-        }
-        typesnovelties = response.Response;
-        return true;
-    }
-
     private async Task LoadPagesAsync()
     {
-        var response = await repository.GetAsync<int>("api/typesnovelties/totalPages");
+        var url = string.Empty;
+        if (string.IsNullOrEmpty(Filter))
+        {
+            url = $"api/typesnovelties/totalPages";
+        }
+        else
+        {
+            url = $"api/typesnovelties/totalPages?filter={Filter}";
+        }
+
+        var response = await repository.GetAsync<int>(url);
         if (response.Error)
         {
             var message = await response.GetErrorMessageAsync();
@@ -96,33 +113,65 @@
         totalPages = response.Response;
     }
 
-    private async Task DeleteAsync(TypeNovelty typenovelty)
+    private async Task<bool> LoadListAsync(int page)
+    {
+        var url = string.Empty;
+        if (string.IsNullOrEmpty(Filter))
+        {
+            url = $"api/typesnovelties?page={page}";
+        }
+        else
+        {
+            url = $"api/typesnovelties?page={page}&filter={Filter}";
+        }
+
+        var response = await repository.GetAsync<List<TypeNovelty>>(url);
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return false;
+        }
+
+        typesnovelties = response.Response;
+        return true;
+    }
+
+    private async Task CleanFilterAsync()
+    {
+        Filter = string.Empty;
+        await ApplyFilterAsync();
+    }
+
+    private async Task ApplyFilterAsync()
+    {
+        int page = 1;
+        await LoadAsync(page);
+        await SelectedPageAsync(page);
+    }
+
+    private async Task DeleteAsync (TypeNovelty typesnovelties)
     {
         var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmación",
-                Text = $"¿Esta seguro que quieres borrar el tipo de novedad:{typenovelty.Name}?",
+                Text = $"¿Esta seguro que quieres borrar el tipo de novedad: {typesnovelties.Name}?",
                 Icon = SweetAlertIcon.Question,
                 ShowCancelButton = true
             });
-
         var confirm = string.IsNullOrEmpty(result.Value);
-
         if (confirm)
         {
             return;
         }
-
-        var response = await repository.DeleteAsync($"api/typesnovelties/{typenovelty.Id}");
+        var response = await repository.DeleteAsync($"api/typesnovelties/{typesnovelties.Id}");
         if (response.Error)
         {
-            var mensajeError = await response.GetErrorMessageAsync();
-            await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
         }
-
         await LoadAsync();
-
         var toast = sweetAlertService.Mixin(new SweetAlertOptions
             {
                 Toast = true,
@@ -130,7 +179,6 @@
                 ShowConfirmButton = true,
                 Timer = 3000
             });
-        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios Guardados con exito");
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Registro borrado con éxito.");
     }
-
-}
+    }

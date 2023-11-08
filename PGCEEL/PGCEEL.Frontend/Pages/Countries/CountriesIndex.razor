@@ -5,7 +5,19 @@
 
 <h3>Paises</h3>
 
-<a href="/countries/create" class="btn btn-primary mb-2">Nuevo País</a>
+<div class="mb-2" style="display: flex; flex-wrap:wrap; align-items: center;">
+    <div>
+        <a href="/countries/create" class="btn btn-primary mb-2">Nuevo País</a>
+    </div>
+    <div class="mx-2">
+        <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Tipo de Novedad..." @bind-value="Filter" />
+    </div>
+    <div>
+        <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync">Filtrar</button>
+        <button type="button" class="btn btn-outline-danger" @onclick="CleanFilterAsync">Limpiar</button>
+    </div>
+</div>
+
 
 <GenericList MyList="countries">
     <NoRecords>
@@ -52,6 +64,14 @@
     private int currentPage = 1;
     private int totalPages;
 
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Page { get; set; } = string.Empty;
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Filter { get; set; } = string.Empty;
+
     protected override async Task OnInitializedAsync()
 
     {
@@ -67,6 +87,11 @@
 
     private async Task LoadAsync(int page = 1)
     {
+        if (!string.IsNullOrWhiteSpace(Page))
+        {
+            page = Convert.ToInt32(Page);
+        }
+
         var ok = await LoadListAsync(page);
         if (ok)
         {
@@ -74,9 +99,43 @@
         }
     }
 
+    private async Task LoadPagesAsync()
+    {
+        var url = string.Empty;
+        if (string.IsNullOrEmpty(Filter))
+        {
+            url = $"api/countries/totalPages";
+        }
+        else
+        {
+            url = $"api/countries/totalPages?filter={Filter}";
+        }
+
+        var response = await repository.GetAsync<int>(url);
+
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        totalPages = response.Response;
+    }
+
     private async Task<bool> LoadListAsync(int page)
     {
-        var response = await repository.GetAsync<List<Country>>($"api/countries/?page={page}");
+        var url = string.Empty;
+        if (string.IsNullOrEmpty(Filter))
+        {
+            url = $"api/countries?page={page}";
+        }
+        else
+        {
+            url = $"api/countries?page={page}&filter={Filter}";
+        }
+
+        var response = await repository.GetAsync<List<Country>>(url);
+
         if (response.Error)
         {
             var message = await response.GetErrorMessageAsync();
@@ -88,18 +147,19 @@
         return true;
     }
 
-    private async Task LoadPagesAsync()
+    
+    private async Task CleanFilterAsync()
     {
-        var response = await repository.GetAsync<int>("api/countries/totalPages");
-        if (response.Error)
-        {
-            var message = await response.GetErrorMessageAsync();
-            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
-            return;
-        }
-        totalPages = response.Response;
+        Filter = string.Empty;
+        await ApplyFilterAsync();
     }
 
+    private async Task ApplyFilterAsync()
+    {
+        int page = 1;
+        await LoadAsync(page);
+        await SelectedPageAsync(page);
+    }
 
     private async Task Delete(Country country)
     {
