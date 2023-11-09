@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PGCEEL.Shared.Entities;
 
 namespace PGCELL.Backend.Data
 {
-    public class DataContext : DbContext
+  
+
+    public class DataContext : IdentityDbContext<User>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -15,10 +18,11 @@ namespace PGCELL.Backend.Data
         public DbSet<Employer> Employers{ get; set; }
         public DbSet<Modality> Modalities{ get; set; }
         public DbSet<Pet> Pets { get; set; }
-        public DbSet<Role> Roles { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<TypeNovelty> TypesNovelties { get; set; }
-        public DbSet<User> Users { get; set; }
+
+        public DbSet<Role> roles { get; set; }
+
         public DbSet<UserRol> UserRols { get; set; }
         public DbSet<Worker> Workers { get; set; }
         public DbSet<WorkingHours> WorkingHours { get; set; }
@@ -36,7 +40,6 @@ namespace PGCELL.Backend.Data
             modelBuilder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
             modelBuilder.Entity<State>().HasIndex(s => new { s.CountryId, s.Name }).IsUnique();
             modelBuilder.Entity<TypeNovelty>().HasIndex(t => t.Name).IsUnique();
-            modelBuilder.Entity<User>().HasIndex(u => u.Name).IsUnique();
             modelBuilder.Entity<UserRol>().HasIndex(u => u.Name).IsUnique();
             modelBuilder.Entity<Worker>().HasIndex(w => w.Name).IsUnique();
             modelBuilder.Entity<WorkingHours>().HasIndex(w => w.Name).IsUnique();

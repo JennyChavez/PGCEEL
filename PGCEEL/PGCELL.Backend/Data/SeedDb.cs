@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PGCEEL.Shared.Entities;
+using PGCEEL.Shared.Enums;
 using PGCEEL.Shared.Responses;
+using PGCELL.Backend.Helpers;
+using PGCELL.Backend.Intertfaces;
 using PGCELL.Backend.Services;
 using System.Data;
 
@@ -10,11 +13,13 @@ namespace PGCELL.Backend.Data
     {
         private readonly DataContext _context;
         private readonly IApiService _apiService;
+        private readonly IUserHelper _userHelper;
 
-        public SeedDb(DataContext context, IApiService apiService)
+        public SeedDb(DataContext context, IApiService apiService, IUserHelper userHelper)
         {
             _context = context;
             _apiService = apiService;
+            _userHelper = userHelper;
         }
 
         public async Task SeedAsync()
@@ -25,7 +30,41 @@ namespace PGCELL.Backend.Data
             await CheckWorkersAsync();
             await CheckRolesAsync();
             await CheckModalitiesAsync();
+            await CheckUserAsync("1234567890", "Jenny Carolina", "Chavez", "jennycaro13@gmail.com", "312 345 45 67", "Calle 40 sur N 78 - 90 ", UserType.Admin);
+
         }
+
+        private async Task<User> CheckUserAsync(string document, string firstName, string lastName, string email, string phone, string address, UserType userType)
+        {
+            var user = await _userHelper.GetUserAsync(email);
+            if (user == null)
+            {
+                user = new User
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    UserName = email,
+                    PhoneNumber = phone,
+                    Address = address,
+                    Document = document,
+                    City = _context.Cities.FirstOrDefault(),
+                    UserType = userType,
+                };
+
+                await _userHelper.AddUserAsync(user, "1234567890");
+                await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+            }
+
+            return user;
+        }
+
+        private async Task CheckRolesAsync()
+        {
+            await _userHelper.CheckRoleAsync(UserType.Admin.ToString());
+            await _userHelper.CheckRoleAsync(UserType.User.ToString());
+        }
+
         private async Task CheckModalitiesAsync()
         {
             if (!_context.Modalities.Any())
@@ -44,17 +83,7 @@ namespace PGCELL.Backend.Data
                 await _context.SaveChangesAsync();
             }
         }
-        private async Task CheckRolesAsync()
-        {
-            if (!_context.Roles.Any())
-            {
-                _context.Roles.Add(new Role { Name = "Administrador" });
-                _context.Roles.Add(new Role { Name = "Editor" });
-                _context.Roles.Add(new Role { Name = "Observador" });               
-
-                await _context.SaveChangesAsync();
-            }
-        }
+      
         private async Task CheckWorkersAsync()
         {
             if (!_context.Workers.Any())
