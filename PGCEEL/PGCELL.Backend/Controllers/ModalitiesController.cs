@@ -10,7 +10,9 @@ namespace PGCELL.Backend.Controllers
     [ApiController]
     public class ModalitiesController : GenericController<Modality>
     {
+
         private readonly DataContext _context;
+
         public ModalitiesController(IGenericUnitOfWork<Modality> unitOfWork, DataContext context) : base(unitOfWork, context)
         {
             _context = context;

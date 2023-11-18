@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PGCEEL.Shared.DTOs;
 using PGCEEL.Shared.Responses;
 using PGCELL.Backend.Data;
 using PGCELL.Backend.Intertfaces;
@@ -134,6 +135,16 @@ namespace PGCELL.Backend.Repositories
                     Message = dbUpdateException.InnerException.Message
                 };
             }
+        }
+
+        public Task<Response<IEnumerable<T>>> GetAsync(PaginationDTO pagination)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Response<int>> GetTotalPagesAsync(PaginationDTO pagination)
+        {
+            throw new NotImplementedException();
         }
     }
 

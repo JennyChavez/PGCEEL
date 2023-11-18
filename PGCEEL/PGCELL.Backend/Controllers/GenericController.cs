@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PGCEEL.Shared.DTOs;
+using PGCEEL.Shared.Entities;
 using PGCELL.Backend.Data;
 using PGCELL.Backend.Helpers;
 using PGCELL.Backend.Intertfaces;
@@ -10,31 +11,40 @@ namespace PGCELL.Backend.Controllers
     public class GenericController<T> : Controller where T : class
     {
         private readonly IGenericUnitOfWork<T> _unitOfWork;
-        private readonly DbSet<T> _entity;
+        private IGenericUnitOfWork<City> unitOfWork;
 
         public GenericController(IGenericUnitOfWork<T> unitOfWork, DataContext context)
         {
             _unitOfWork = unitOfWork;
-            _entity = context.Set<T>();
+        }
+
+        public GenericController(IGenericUnitOfWork<City> unitOfWork)
+        {
+            this.unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public virtual async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _entity.AsQueryable();
-            return Ok(await queryable
-                .Paginate(pagination)
-                .ToListAsync());
+            var action = await _unitOfWork.GetAsync(pagination);
+            if (action.WasSuccess)
+            {
+                return Ok(action.Result);
+            }
+            return BadRequest();
         }
 
         [HttpGet("totalPages")]
-        public virtual async Task<ActionResult> GetPagesAsync([FromQuery] PaginationDTO pagination)
+        public virtual async Task<IActionResult> GetPagesAsync([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _entity.AsQueryable();
-            double count = await queryable.CountAsync();
-            double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
-            return Ok(totalPages);
+            var action = await _unitOfWork.GetTotalPagesAsync(pagination);
+            if (action.WasSuccess)
+            {
+                return Ok(action.Result);
+            }
+            return BadRequest();
         }
+
 
         [HttpGet("{id}")]
         public virtual async Task<IActionResult> GetAsync(int id)

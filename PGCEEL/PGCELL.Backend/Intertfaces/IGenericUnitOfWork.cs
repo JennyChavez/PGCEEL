@@ -1,10 +1,13 @@
-﻿using PGCEEL.Shared.Responses;
+﻿using PGCEEL.Shared.DTOs;
+using PGCEEL.Shared.Responses;
 
 namespace PGCELL.Backend.Intertfaces
 {
     public interface IGenericUnitOfWork<T> where T : class
     {
-        Task<Response<IEnumerable<T>>> GetAsync();
+        Task<Response<IEnumerable<T>>> GetAsync(PaginationDTO pagination);
+
+        Task<Response<int>> GetTotalPagesAsync(PaginationDTO pagination);
 
         Task<Response<T>> AddAsync(T model);
 

@@ -9,7 +9,9 @@ namespace PGCELL.Backend.Controllers
     [ApiController]
     public class RolesController : GenericController<Role>
     {
+
         private readonly DataContext _context;
+
         public RolesController(IGenericUnitOfWork<Role> unitOfWork, DataContext context) : base(unitOfWork, context)
         {
             _context = context;
