@@ -1,4 +1,4 @@
-﻿@page "/typesnovelties/edit/{Id:int}"
+﻿@page "/typesnovelties/edit/{TipeNoveltyId:int}"
 @inject NavigationManager navigationManager
 @inject IRepository repository
 @inject SweetAlertService sweetAlertService
@@ -20,12 +20,15 @@ else
     private TypeNovelty? typevovelty;
     private TypeNoveltyForm? typevoveltyForm;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     [Parameter]
-    public int Id { get; set; }
+    public int TipeNoveltyId { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
-        var response = await repository.GetAsync<TypeNovelty>($"api/typesnovelties/{Id}");
+        var response = await repository.GetAsync<TypeNovelty>($"api/typesnovelties/{TipeNoveltyId}");
         if (response.Error)
         {
             if (response.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -51,6 +54,7 @@ else
             return;
         }
 
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         Return();
 
         var toast = sweetAlertService.Mixin(new SweetAlertOptions

@@ -12,6 +12,9 @@
     private TypeNovelty typenovelty = new();
     private TypeNoveltyForm? typenoveltyForm;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     private async Task CreateAsync()
     {
         var response = await repository.PostAsync("/api/typesnovelties", typenovelty);
@@ -22,6 +25,7 @@
             return;
         }
 
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         Return();
 
         var toast = sweetAlertService.Mixin(new SweetAlertOptions

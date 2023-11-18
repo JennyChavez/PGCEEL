@@ -6,7 +6,7 @@
 
 <div class="mb-2" style="display: flex; flex-wrap:wrap; align-items: center;">
     <div>
-        <a class="btn btn-primary" href="/typesnovelties/create">Nueva Tipo de Novedad</a>
+        <a class="btn btn-primary" @onclick=@(() => ShowModal())>Nueva Tipo de Novedad</a>
     </div>
     <div class="mx-2">
         <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Tipo de Novedad..." @bind-value="Filter" />
@@ -41,7 +41,7 @@
                     <tr>
                         <td>@typenovelty.Name</td>
                         <td>
-                            <a class="btn btn-warning btn-sm" href="/typesnovelties/edit/@typenovelty.Id">Editar</a>
+                            <a class="btn btn-warning btn-sm" @onclick=@(() => ShowModal(typenovelty.Id, true))>Editar</a>
                             <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(typenovelty))>Borrar</button>
                         </td>
                     </tr>
@@ -57,6 +57,10 @@
     private int currentPage = 1;
     private int totalPages;
 
+[CascadingParameter]
+IModalService Modal { get; set; } = default!;
+
+
     [Parameter]
     [SupplyParameterFromQuery]
     public string Page { get; set; } = string.Empty;
@@ -69,6 +73,27 @@
     {
         await LoadAsync();
     }
+
+    private async Task ShowModal(int id = 0, bool isEdit = false)
+    {
+        IModalReference modalReference;
+
+        if (isEdit)
+        {
+            modalReference = Modal.Show<TypeNoveltyEdit>(string.Empty, new ModalParameters().Add("TipeNoveltyId", id));
+        }
+        else
+        {
+            modalReference = Modal.Show<TypeNoveltyCreate>();
+        }
+
+        var result = await modalReference.Result;
+        if (result.Confirmed)
+        {
+            await LoadAsync();
+        }
+    }
+
 
     private async Task SelectedPageAsync(int page)
     {
