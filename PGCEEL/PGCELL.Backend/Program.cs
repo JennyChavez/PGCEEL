@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PGCEEL.Shared.Entities;
@@ -7,8 +8,6 @@ using PGCELL.Backend.Intertfaces;
 using PGCELL.Backend.Repositories;
 using PGCELL.Backend.Services;
 using PGCELL.Backend.UnitsOfWork;
-using System.Text.Json.Serialization;
-
 
 
 var builder = WebApplication.CreateBuilder(args);

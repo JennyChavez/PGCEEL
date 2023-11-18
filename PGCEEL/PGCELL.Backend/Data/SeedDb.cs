@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PGCEEL.Backend.Data;
+using PGCEEL.Backend.Helpers;
 using PGCEEL.Shared.Entities;
 using PGCEEL.Shared.Enums;
 using PGCEEL.Shared.Responses;
-using PGCELL.Backend.Helpers;
 using PGCELL.Backend.Intertfaces;
 using PGCELL.Backend.Services;
-using System.Data;
 
 namespace PGCELL.Backend.Data
 {
@@ -14,12 +14,17 @@ namespace PGCELL.Backend.Data
         private readonly DataContext _context;
         private readonly IApiService _apiService;
         private readonly IUserHelper _userHelper;
+        private readonly IFileStorage _fileStorage;
+        private readonly IRuntimeInformationWrapper _runtimeInformationWrapper;
+        
 
         public SeedDb(DataContext context, IApiService apiService, IUserHelper userHelper)
         {
             _context = context;
             _apiService = apiService;
             _userHelper = userHelper;
+            //_fileStorage = fileStorage;
+            //_runtimeInformationWrapper = runtimeInformationWrapper;
         }
 
         public async Task SeedAsync()

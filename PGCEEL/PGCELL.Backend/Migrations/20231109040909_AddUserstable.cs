@@ -12,16 +12,12 @@ namespace PGCELL.Backend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropPrimaryKey(
-                name: "PK_Users",
-                table: "Users");
+    name: "PK_Users",
+    table: "Users");
 
             migrationBuilder.DropIndex(
                 name: "IX_Users_Name",
                 table: "Users");
-
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Roles",
-                table: "Roles");
 
             migrationBuilder.DropColumn(
                 name: "Name",
@@ -31,23 +27,33 @@ namespace PGCELL.Backend.Migrations
                 name: "Users",
                 newName: "AspNetUsers");
 
+            // Crear una tabla temporal para almacenar los datos de AspNetUsers
+            migrationBuilder.CreateTable(
+                name: "TempAspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    //Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                    // Agregar aquí las otras columnas de AspNetUsers
+                    // ...
+                });
+
+
+            // Eliminar la tabla AspNetUsers original
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            // Renombrar la tabla temporal a AspNetUsers
             migrationBuilder.RenameTable(
-                name: "Roles",
-                newName: "Role");
+                name: "TempAspNetUsers",
+                newName: "AspNetUsers");
 
-            migrationBuilder.RenameIndex(
-                name: "IX_Roles_Name",
-                table: "Role",
-                newName: "IX_Role_Name");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Id",
+            // Definir la nueva columna "Id" como clave primaria
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_AspNetUsers",
                 table: "AspNetUsers",
-                type: "nvarchar(450)",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int")
-                .OldAnnotation("SqlServer:Identity", "1, 1");
+                column: "Id");
+
 
             migrationBuilder.AddColumn<int>(
                 name: "AccessFailedCount",
@@ -192,12 +198,20 @@ namespace PGCELL.Backend.Migrations
                 table: "AspNetUsers",
                 type: "int",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0);                   
 
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_AspNetUsers",
-                table: "AspNetUsers",
-                column: "Id");
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_Roles",
+                table: "Roles");
+
+            migrationBuilder.RenameTable(
+                name: "Roles",
+                newName: "Role");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_Roles_Name",
+                table: "Role",
+                newName: "IX_Role_Name");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Role",

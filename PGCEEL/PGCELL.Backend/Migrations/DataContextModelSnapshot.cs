@@ -176,7 +176,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("StateId", "Name")
                         .IsUnique();
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.Contract", b =>
@@ -197,7 +197,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Contracts");
+                    b.ToTable("Contracts", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.Country", b =>
@@ -218,7 +218,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.Employer", b =>
@@ -239,7 +239,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Employers");
+                    b.ToTable("Employers", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.Modality", b =>
@@ -260,7 +260,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Modalities");
+                    b.ToTable("Modalities", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.Pet", b =>
@@ -281,7 +281,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Pets");
+                    b.ToTable("Pets", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.Role", b =>
@@ -302,7 +302,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("roles");
+                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.State", b =>
@@ -326,7 +326,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("CountryId", "Name")
                         .IsUnique();
 
-                    b.ToTable("States");
+                    b.ToTable("States", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.TypeNovelty", b =>
@@ -347,7 +347,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("TypesNovelties");
+                    b.ToTable("TypesNovelties", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.User", b =>
@@ -464,7 +464,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("UserRols");
+                    b.ToTable("UserRols", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.Worker", b =>
@@ -485,7 +485,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Workers");
+                    b.ToTable("Workers", (string)null);
                 });
 
             modelBuilder.Entity("PGCEEL.Shared.Entities.WorkingHours", b =>
@@ -506,7 +506,7 @@ namespace PGCELL.Backend.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("WorkingHours");
+                    b.ToTable("WorkingHours", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
